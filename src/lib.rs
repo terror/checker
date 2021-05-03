@@ -6,10 +6,17 @@ use std::{error, fmt};
 static APP_USER_AGENT: &str = "checker (https://crates.io/crates/checker)";
 static BASE_URL: &str = "https://crates.io";
 
+#[derive(Debug)]
 pub enum Status {
   Free,
   Taken,
   Unknown,
+}
+
+impl fmt::Display for Status {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "{:?}", self)
+  }
 }
 
 pub struct Crate {
@@ -25,32 +32,24 @@ pub struct Data {
   pub updated_at:    String,
   pub versions:      Vec<i64>,
   pub description:   String,
-  pub keywords:      Vec<String>,
-  pub badges:        Vec<String>,
   pub created_at:    String,
   pub downloads:     i64,
   pub documentation: Option<String>,
   pub homepage:      Option<String>,
   pub repository:    Option<String>,
   pub links:         Links,
-  pub exact_match:   bool,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct Links {
-  version_downloads:    String,
-  versions:             Option<String>,
-  owners:               String,
-  owner_team:           String,
-  owner_user:           String,
-  reverse_dependencies: String,
+  owner_user: String,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct Owner {
   pub id:     i64,
   pub login:  String,
-  pub name:   String,
+  pub name:   Option<String>,
   pub avatar: String,
   pub url:    String,
 }
@@ -71,10 +70,7 @@ impl Crate {
   }
 
   pub fn is_taken(&self) -> bool {
-    match self.status {
-      Status::Free => false,
-      _ => true,
-    }
+    !matches!(self.status, Status::Free)
   }
 
   pub fn is_inactive(&self) -> bool {
@@ -131,5 +127,26 @@ fn find_owners(
     Ok(Some(owners))
   } else {
     Ok(None)
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn test_free_crate() {
+    let result: Crate = check("freecratenameyeet").unwrap();
+    assert!(result.name == String::from("freecratenameyeet"));
+    assert!(result.data.is_none());
+    assert!(result.owners.is_none());
+  }
+
+  #[test]
+  fn test_taken_crate() {
+    let result = check("syn").unwrap();
+    assert!(result.name == String::from("syn"));
+    assert!(result.data.is_some());
+    assert!(result.owners.is_some());
   }
 }

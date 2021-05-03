@@ -2,8 +2,6 @@
 
 a crates.io crate name availability checker
 
-## Demo
-
 ## Installation
 
 Simply use cargo to install the binary

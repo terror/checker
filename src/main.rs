@@ -3,8 +3,7 @@ extern crate prettytable;
 
 use checker::{check, Status};
 use chrono::NaiveDateTime;
-use colored::*;
-use std::{error, path::PathBuf};
+use std::{error, fs::write, io, path::PathBuf};
 use structopt::StructOpt;
 
 #[derive(StructOpt, Debug)]
@@ -22,7 +21,7 @@ struct Opt {
   output: Option<PathBuf>,
 }
 
-fn main() {
+fn main() -> io::Result<()> {
   let opt = Opt::from_args();
 
   let mut table = table!(["Name", "Status", "Owner(s)", "Last Updated"]);
@@ -32,8 +31,8 @@ fn main() {
 
     match c.status {
       Status::Free => {
-        table.add_row(row![&name, "Free".green(), "N/A", "N/A"]);
-      },
+        table.add_row(row![&name, Fg -> c.status.to_string(), "N/A", "N/A"]);
+      }
       Status::Taken => {
         let mut owners = String::new();
 
@@ -46,17 +45,24 @@ fn main() {
         let updated_at = updated_duration_since(data.updated_at).unwrap();
 
         table.add_row(row![
-          &name,
-          "Taken".red(),
-          owners,
-          format!("{} day(s) ago", updated_at)
+           &name,
+          Fr -> c.status.to_string(),
+           owners,
+           format!("{} day(s) ago", updated_at)
         ]);
-      },
-      _ => {},
+      }
+      _ => {}
     };
   }
 
-  table.printstd();
+  if let Some(output) = opt.output {
+    write(&output, table.to_string())?;
+    println!("Exported results to `{}`", &output.display());
+  } else {
+    table.printstd();
+  }
+
+  Ok(())
 }
 
 fn updated_duration_since(updated_at: String) -> Result<i64, Box<dyn error::Error>> {
