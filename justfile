@@ -20,3 +20,6 @@ watch command='test':
 
 clippy:
   cargo clippy --all
+
+help:
+  cargo run -- --help

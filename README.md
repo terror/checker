@@ -2,6 +2,8 @@
 
 a crates.io crate name availability checker
 
+## Demo
+
 ## Installation
 
 Simply use cargo to install the binary
@@ -17,12 +19,13 @@ checker 0.0.1
 a crates.io crate name availability checker
 
 USAGE:
-    checker --check <check>
+    checker [OPTIONS]
 
 FLAGS:
     -h, --help       Prints help information
     -V, --version    Prints version information
 
 OPTIONS:
-    -c, --check <check>    Check crate name availability
+    -c, --check <names>...    Check crate name availability
+    -o, --output <output>     Output file
 ```
