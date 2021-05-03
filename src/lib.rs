@@ -1,3 +1,18 @@
+//! A crates.io crate name availability checker
+//!
+//! ## Installation
+//! Simply add `checker = "0.0.1"` to your Cargo.toml
+//!
+//! ## Example
+//! ```
+//! use checker::{check, Crate, Status};
+//!
+//! let result: Crate = check("checker-example").unwrap();
+//! assert_eq!(result.name, "checker-example");
+//! assert_eq!(result.is_taken(), false);
+//! assert!(result.data.is_none());
+//! assert!(result.owners.is_none());
+//! ```
 use reqwest::{blocking, StatusCode};
 use serde::{Deserialize, Serialize};
 use serde_json::{from_str, from_value, Value};
@@ -71,13 +86,6 @@ impl Crate {
 
   pub fn is_taken(&self) -> bool {
     !matches!(self.status, Status::Free)
-  }
-
-  pub fn is_inactive(&self) -> bool {
-    if let Some(data) = &self.data {
-      println!("{}", data.created_at);
-    }
-    true
   }
 }
 

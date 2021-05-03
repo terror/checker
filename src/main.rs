@@ -32,7 +32,7 @@ fn main() -> io::Result<()> {
     match c.status {
       Status::Free => {
         table.add_row(row![&name, Fg -> c.status.to_string(), "N/A", "N/A"]);
-      }
+      },
       Status::Taken => {
         let mut owners = String::new();
 
@@ -50,8 +50,8 @@ fn main() -> io::Result<()> {
            owners,
            format!("{} day(s) ago", updated_at)
         ]);
-      }
-      _ => {}
+      },
+      _ => {},
     };
   }
 
