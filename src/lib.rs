@@ -1,7 +1,7 @@
 //! A crates.io crate name availability checker
 //!
 //! ## Installation
-//! Simply add `checker = "0.0.1"` to your Cargo.toml
+//! Simply add `checker = "0.0.2"` to your Cargo.toml
 //!
 //! ## Example
 //! ```
@@ -40,19 +40,19 @@ impl fmt::Display for Status {
 }
 
 pub struct Crate {
-  pub name: String,
-  pub data: Option<Data>,
+  pub name:   String,
+  pub data:   Option<Data>,
   pub owners: Option<Vec<Owner>>,
   pub status: Status,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct Data {
-  pub id: String,
+  pub id:         String,
   pub updated_at: String,
   pub created_at: String,
   pub repository: Option<String>,
-  pub links: Links,
+  pub links:      Links,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -63,7 +63,7 @@ pub struct Links {
 #[derive(Serialize, Deserialize)]
 pub struct Owner {
   pub login: String,
-  pub url: String,
+  pub url:   String,
 }
 
 impl Crate {

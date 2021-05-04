@@ -29,12 +29,12 @@ $ cargo install checker
 
 ## Usage
 
-You can use checker as a command line utility or a rust crate.
+You can use checker as a command line utility or a library.
 
 ### CLI
 
 ```
-checker 0.0.1
+checker 0.0.2
 a crates.io crate name availability checker
 
 USAGE:
