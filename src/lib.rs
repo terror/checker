@@ -7,12 +7,17 @@
 //! ```
 //! use checker::{check, Crate, Status};
 //!
-//! let result: Crate = check("checker-example").unwrap();
-//! assert_eq!(result.name, "checker-example");
-//! assert_eq!(result.is_taken(), false);
-//! assert!(result.data.is_none());
-//! assert!(result.owners.is_none());
+//! let result: Crate = check("t").unwrap();
+//!
+//! assert_eq!(result.name, "t");
+//! assert_eq!(result.is_taken(), true);
+//! assert_eq!(result.is_inactive().unwrap(), true);
+//!
+//! assert!(result.days_since_last_updated().unwrap() >= 1825);
+//! assert!(result.data.is_some());
+//! assert!(result.owners.is_some());
 //! ```
+use chrono::NaiveDateTime;
 use reqwest::{blocking, StatusCode};
 use serde::{Deserialize, Serialize};
 use serde_json::{from_str, from_value, Value};
@@ -35,24 +40,19 @@ impl fmt::Display for Status {
 }
 
 pub struct Crate {
-  pub name:   String,
-  pub data:   Option<Data>,
+  pub name: String,
+  pub data: Option<Data>,
   pub owners: Option<Vec<Owner>>,
   pub status: Status,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct Data {
-  pub id:            String,
-  pub updated_at:    String,
-  pub versions:      Vec<i64>,
-  pub description:   String,
-  pub created_at:    String,
-  pub downloads:     i64,
-  pub documentation: Option<String>,
-  pub homepage:      Option<String>,
-  pub repository:    Option<String>,
-  pub links:         Links,
+  pub id: String,
+  pub updated_at: String,
+  pub created_at: String,
+  pub repository: Option<String>,
+  pub links: Links,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -62,11 +62,8 @@ pub struct Links {
 
 #[derive(Serialize, Deserialize)]
 pub struct Owner {
-  pub id:     i64,
-  pub login:  String,
-  pub name:   Option<String>,
-  pub avatar: String,
-  pub url:    String,
+  pub login: String,
+  pub url: String,
 }
 
 impl Crate {
@@ -87,11 +84,32 @@ impl Crate {
   pub fn is_taken(&self) -> bool {
     !matches!(self.status, Status::Free)
   }
+
+  pub fn days_since_last_updated(&self) -> Result<i64, Box<dyn error::Error>> {
+    if let Some(data) = &self.data {
+      let last_updated_at = NaiveDateTime::parse_from_str(&data.updated_at, "%Y-%m-%dT%H:%M:%S%Z")?;
+
+      let now = chrono::Utc::now().naive_utc();
+
+      let diff = now.signed_duration_since(last_updated_at);
+
+      Ok(diff.num_days())
+    } else {
+      Ok(-1)
+    }
+  }
+
+  pub fn is_inactive(&self) -> Result<bool, Box<dyn error::Error>> {
+    if matches!(self.status, Status::Free) {
+      return Ok(true);
+    }
+    Ok(self.days_since_last_updated()? >= 1825)
+  }
 }
 
 impl fmt::Display for Crate {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "({}, {})", self.name, self.is_taken())
+    write!(f, "Name: {}, Taken: {}", self.name, self.is_taken())
   }
 }
 
@@ -145,6 +163,7 @@ mod tests {
   #[test]
   fn test_free_crate() {
     let result: Crate = check("freecratenameyeet").unwrap();
+    assert_eq!(result.is_taken(), false);
     assert!(result.name == String::from("freecratenameyeet"));
     assert!(result.data.is_none());
     assert!(result.owners.is_none());
@@ -153,6 +172,80 @@ mod tests {
   #[test]
   fn test_taken_crate() {
     let result = check("syn").unwrap();
+    assert_eq!(result.is_taken(), true);
+    assert!(result.name == String::from("syn"));
+    assert!(result.data.is_some());
+    assert!(result.owners.is_some());
+  }
+
+  #[test]
+  fn test_multiple_free_crates() {
+    let crate_names = vec![
+      "sdlkfjsdkeekx",
+      "noonewillclaimthisxd",
+      "dkjddkk333",
+      "dodooodeiie",
+      "sdfkljk3i22",
+      "x0rowowowpp",
+    ];
+
+    for name in crate_names {
+      let result = check(name).unwrap();
+      assert_eq!(result.is_taken(), false);
+      assert!(result.name == String::from(name));
+      assert!(result.data.is_none());
+      assert!(result.owners.is_none());
+    }
+  }
+
+  #[test]
+  fn test_multiple_taken_crates() {
+    let crate_names = vec![
+      "syn",
+      "just",
+      "ff",
+      "xplr",
+      "run",
+      "rust",
+      "hack",
+      "dev",
+      "root",
+      "file",
+      "own",
+      "serde",
+      "serde_json",
+    ];
+
+    for name in crate_names {
+      let result = check(name).unwrap();
+      assert_eq!(result.is_taken(), true);
+      assert!(result.name == String::from(name));
+      assert!(result.data.is_some());
+      assert!(result.owners.is_some());
+    }
+  }
+
+  #[test]
+  fn test_is_inactive() {
+    let result = check("t").unwrap();
+
+    assert_eq!(result.is_inactive().unwrap(), true);
+    assert_eq!(result.is_taken(), true);
+
+    assert!(result.days_since_last_updated().unwrap() >= 1825);
+    assert!(result.name == String::from("t"));
+    assert!(result.data.is_some());
+    assert!(result.owners.is_some());
+  }
+
+  #[test]
+  fn test_is_not_inactive() {
+    let result = check("syn").unwrap();
+
+    assert_eq!(result.is_inactive().unwrap(), false);
+    assert_eq!(result.is_taken(), true);
+
+    assert!(result.days_since_last_updated().unwrap() < 1825);
     assert!(result.name == String::from("syn"));
     assert!(result.data.is_some());
     assert!(result.owners.is_some());

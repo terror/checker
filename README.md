@@ -54,13 +54,17 @@ OPTIONS:
 Example:
 
 ```rust
-use checker::{check, Crate};
+use checker::{check, Crate, Status};
 
 fn main() {
-  let result: Crate = check("checker-example").unwrap();
-  assert_eq!(result.name, "checker-example");
-  assert_eq!(result.is_taken(), false);
-  assert!(result.data.is_none());
-  assert!(result.owners.is_none());
+  let result: Crate = check("t").unwrap();
+
+  assert_eq!(result.name, "t");
+  assert_eq!(result.is_taken(), true);
+  assert_eq!(result.is_inactive().unwrap(), true);
+
+  assert!(result.days_since_last_updated().unwrap() >= 1825);
+  assert!(result.data.is_some());
+  assert!(result.owners.is_some());
 }
 ```
