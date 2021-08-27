@@ -20,7 +20,7 @@ impl Opt {
     let mut table = Table::new();
 
     for name in &self.names {
-      table.add_row(check(&name)?)?;
+      table.add_row(check(name)?)?;
     }
 
     if let Some(output) = &self.output {

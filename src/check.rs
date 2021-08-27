@@ -29,7 +29,7 @@ mod tests {
   #[test]
   fn free_crate() {
     let result = check("freecratenameyeet").unwrap();
-    assert_eq!(result.is_taken(), false);
+    assert!(!result.is_taken());
     assert!(result.name == *"freecratenameyeet");
     assert!(result.data.is_none());
     assert!(result.owners.is_none());
@@ -38,7 +38,7 @@ mod tests {
   #[test]
   fn taken_crate() {
     let result = check("syn").unwrap();
-    assert_eq!(result.is_taken(), true);
+    assert!(result.is_taken());
     assert!(result.name == *"syn");
     assert!(result.data.is_some());
     assert!(result.owners.is_some());
@@ -57,7 +57,7 @@ mod tests {
 
     for name in crate_names {
       let result = check(name).unwrap();
-      assert_eq!(result.is_taken(), false);
+      assert!(!result.is_taken());
       assert!(result.name == *name);
       assert!(result.data.is_none());
       assert!(result.owners.is_none());
@@ -84,7 +84,7 @@ mod tests {
 
     for name in crate_names {
       let result = check(name).unwrap();
-      assert_eq!(result.is_taken(), true);
+      assert!(result.is_taken());
       assert!(result.name == *name);
       assert!(result.data.is_some());
       assert!(result.owners.is_some());
@@ -95,8 +95,8 @@ mod tests {
   fn is_inactive() {
     let result = check("t").unwrap();
 
-    assert_eq!(result.is_inactive().unwrap(), true);
-    assert_eq!(result.is_taken(), true);
+    assert!(result.is_inactive().unwrap());
+    assert!(result.is_taken());
 
     assert!(result.days_since_last_updated().unwrap() >= 1825);
     assert!(result.name == *"t");
@@ -108,8 +108,8 @@ mod tests {
   fn is_not_inactive() {
     let result = check("syn").unwrap();
 
-    assert_eq!(result.is_inactive().unwrap(), false);
-    assert_eq!(result.is_taken(), true);
+    assert!(!result.is_inactive().unwrap());
+    assert!(result.is_taken());
 
     assert!(result.days_since_last_updated().unwrap() < 1825);
     assert!(result.name == *"syn");
