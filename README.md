@@ -1,14 +1,12 @@
 ## checker
 
-[![Build](https://github.com/terror/checker/actions/workflows/ci.yaml/badge.svg?branch=master)](https://github.com/terror/checker/actions/workflows/ci.yaml)
+[![Build](https://github.com/terror/checker/actions/workflows/build.yaml/badge.svg?branch=master)](https://github.com/terror/checker/actions/workflows/build.yaml)
 [![crates.io](https://shields.io/crates/v/checker.svg)](https://crates.io/crates/checker)
 
 `checker` is a simple [crates.io](https://crates.io/) crate name availability checker,
 it lets you easily check multiple crate names for availability and activity data.
 
-## Demo
-
-[![asciicast](https://asciinema.org/a/U94NQHUnj1DAyZi2VHWCu5GU0.svg)](https://asciinema.org/a/U94NQHUnj1DAyZi2VHWCu5GU0)
+![Screen Shot 2021-08-27 at 12 15 17 PM](https://user-images.githubusercontent.com/31192478/131159089-826dcbaa-6bd7-4604-8a4c-3f2ea1ceeeb9.png)
 
 ## Installation
 
