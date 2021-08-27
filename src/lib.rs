@@ -17,6 +17,9 @@
 //! assert!(result.data.is_some());
 //! assert!(result.owners.is_some());
 //! ```
+
+#![allow(dead_code, unused_variables)]
+
 #[macro_use]
 extern crate prettytable;
 
@@ -30,4 +33,4 @@ mod package;
 mod status;
 mod table;
 
-pub use crate::{check::check, package::Package, status::Status};
+pub use crate::{check::check, error::Error, package::Package, status::Status};

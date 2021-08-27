@@ -7,7 +7,10 @@ description   = "A crates.io crate name availability checker"
 repository    = "https://github.com/terror/checker"
 homepage      = "https://github.com/terror/checker"
 documentation = "https://docs.rs/checker"
-license       = "MIT"
+license       = "CC0-1.0"
+categories    = ["command-line-utilities"]
+keywords      = ["command-line", "crates-io"]
+resolver      = "2"
 
 [[bin]]
 name = "checker"

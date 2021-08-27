@@ -43,6 +43,7 @@ impl Package {
     !matches!(self.status, Status::Free)
   }
 
+  #[allow(dead_code, unused_variables)]
   pub fn is_inactive(&self) -> Result<bool> {
     if matches!(self.status, Status::Free) {
       return Ok(true);

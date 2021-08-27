@@ -4,27 +4,21 @@ pub fn check(name: &str) -> Result<Package> {
   let client = Client::new()?;
 
   let res = client.get(&format!("/api/v1/crates/{}", name))?;
-
   let status = Status::from(res.status());
-
   let json: Value = from_str(&res.text().unwrap())?;
 
   let data: Option<Data> = from_value(json["crate"].to_owned())?;
-
   let owners = find_owners(client, &data)?;
 
-  Ok(Package::new(name.to_string(), data, owners, status))
+  Ok(Package::new(name.to_owned(), data, owners, status))
 }
 
 fn find_owners(client: Client, data: &Option<Data>) -> Result<Option<Vec<Owner>>> {
   if let Some(data) = data {
     let json: Value = from_str(&client.get(&data.links.owner_user)?.text().unwrap())?;
-
     let owners: Vec<Owner> = from_value(json["users"].to_owned())?;
-
     return Ok(Some(owners));
   }
-
   Ok(None)
 }
 
