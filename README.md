@@ -1,6 +1,6 @@
 ## checker
 
-[![Build](https://github.com/terror/checker/actions/workflows/build.yaml/badge.svg?branch=master)](https://github.com/terror/checker/actions/workflows/build.yaml)
+[![Build](https://github.com/terror/checker/actions/workflows/build.yaml/badge.svg?branch=main)](https://github.com/terror/checker/actions/workflows/build.yaml)
 [![crates.io](https://shields.io/crates/v/checker.svg)](https://crates.io/crates/checker)
 
 `checker` is a simple [crates.io](https://crates.io/) crate name availability checker,
