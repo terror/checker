@@ -1,25 +1,29 @@
-all: build test clippy fmt
+ci: build test clippy fmt-check
 
 build:
-  cargo build
+	cargo build
 
-test *args:
-  cargo test --{{args}}
-
-fmt:
-  cargo +nightly fmt
-
-run *args:
-  cargo run -- {{args}}
-
-publish:
-  cargo publish
-
-watch command='test':
-	cargo watch --exec '{{command}}'
+test:
+	cargo test
 
 clippy:
-  cargo clippy --all
+  cargo clippy --all-targets --all-features
 
-help:
-  cargo run -- --help
+fmt-check:
+  cargo +nightly fmt --all -- --check
+  @echo formatting check done
+
+run *args:
+	cargo run -- --{{args}}
+
+fmt:
+	cargo +nightly fmt
+
+check:
+ cargo check
+
+watch +COMMAND='test':
+	cargo watch --clear --exec "{{COMMAND}}"
+
+usage:
+	cargo run -- --help | pbcopy

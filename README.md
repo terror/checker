@@ -1,19 +1,10 @@
-## <p align='center'>checker</p>
+## checker
 
-<p align='center'>
-  a crates.io crate name availability checker
+[![Build](https://github.com/terror/checker/actions/workflows/ci.yaml/badge.svg?branch=master)](https://github.com/terror/checker/actions/workflows/ci.yaml)
+[![crates.io](https://shields.io/crates/v/checker.svg)](https://crates.io/crates/checker)
 
-  <br/>
-  <br/>
-
-  <a href="https://crates.io/crates/checker" target="_blank">
-    <img src="https://shields.io/crates/v/checker.svg">
-  </a>
-
-  <a href="https://github.com/terror/checker/blob/main/.github/workflows/ci.yml" target="_blank">
-    <img src="https://github.com/terror/checker/actions/workflows/ci.yml/badge.svg">
-  </a>
-</p>
+`checker` is a simple [crates.io](https://crates.io/) crate name availability checker,
+it lets you easily check multiple crate names for availability and activity data.
 
 ## Demo
 
@@ -34,7 +25,7 @@ You can use checker as a command line utility or a library.
 ### CLI
 
 ```
-checker 0.0.2
+checker 0.0.3
 a crates.io crate name availability checker
 
 USAGE:
@@ -54,17 +45,15 @@ OPTIONS:
 Example:
 
 ```rust
-use checker::{check, Crate, Status};
+use checker::{check, Package, Status};
 
-fn main() {
-  let result: Crate = check("t").unwrap();
+let result: Package = check("t").unwrap();
 
-  assert_eq!(result.name, "t");
-  assert_eq!(result.is_taken(), true);
-  assert_eq!(result.is_inactive().unwrap(), true);
+assert_eq!(result.name, "t");
+assert_eq!(result.is_taken(), true);
+assert_eq!(result.is_inactive().unwrap(), true);
 
-  assert!(result.days_since_last_updated().unwrap() >= 1825);
-  assert!(result.data.is_some());
-  assert!(result.owners.is_some());
-}
+assert!(result.days_since_last_updated().unwrap() >= 1825);
+assert!(result.data.is_some());
+assert!(result.owners.is_some());
 ```
